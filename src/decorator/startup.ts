@@ -13,6 +13,7 @@ export class StartupService {
         app.ready$.subscribe(() => {
             this.patchTabFocus()
             this.patchWslCwd()
+            this.patchMouseEvents()
         })
     }
 
@@ -43,6 +44,32 @@ export class StartupService {
                     }
                 }
                 return results
+            })
+        }
+    }
+
+    private patchMouseEvents() {
+        const originalAttach = BaseTerminalTabComponent.prototype.attachTermContainerHandlers
+        BaseTerminalTabComponent.prototype.attachTermContainerHandlers = function () {
+            originalAttach.call(this)
+
+            this['termContainerSubscriptions']['subscriptions'][3].unsubscribe()
+            this['termContainerSubscriptions'].subscribe(this.frontend.mouseEvent$, (event: MouseEvent) => {
+                if (event.type === 'mousedown') {
+                    if (event.which === 1) {
+                        this.multifocus.cancel()
+                    }
+                    if (event.which === 3) {
+                        this.handleRightMouseDown(event)
+                        return
+                    }
+                }
+                if (event.type === 'mouseup') {
+                    if (event.which === 3) {
+                        this.handleRightMouseUp(event)
+                        return
+                    }
+                }
             })
         }
     }
