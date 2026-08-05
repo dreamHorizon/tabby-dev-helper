@@ -2,6 +2,7 @@ import { Inject, Injectable, Optional } from "@angular/core"
 import { AppService, HostWindowService } from "tabby-core"
 import { Shell, ShellProvider } from "tabby-local"
 import { BaseTerminalTabComponent } from "tabby-terminal"
+import { patchOSCProcessor } from "./cwdParser"
 
 @Injectable()
 export class StartupService {
@@ -14,6 +15,7 @@ export class StartupService {
             this.patchTabFocus()
             this.patchWslCwd()
             this.patchMouseEvents()
+            patchOSCProcessor()
         })
     }
 

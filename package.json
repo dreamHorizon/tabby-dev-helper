@@ -23,6 +23,7 @@
     "ngx-toastr": "^16.2.0",
     "rxjs": "^7",
     "slugify": "^1.6.6",
+    "strip-ansi": "^7.0.0",
     "tabby-core": "^1.0.197-nightly.0",
     "tabby-local": "^1.0.197-nightly.0",
     "tabby-ssh": "^1.0.197-nightly.0",
