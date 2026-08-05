@@ -4,6 +4,7 @@ import { ToastrModule } from 'ngx-toastr'
 import { TerminalDecorator } from 'tabby-terminal'
 
 import { DevHelperDecorator } from './decorator'
+import { StartupService } from './decorator/startup'
 
 @NgModule({
     imports: [ToastrModule],
@@ -13,6 +14,9 @@ import { DevHelperDecorator } from './decorator'
             useClass: DevHelperDecorator,
             multi: true,
         },
+        StartupService,
     ],
 })
-export default class DevHelperModule { }
+export default class DevHelperModule {
+    constructor(_startup: StartupService) { }
+}
