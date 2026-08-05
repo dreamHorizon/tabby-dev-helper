@@ -3,6 +3,7 @@ import { AppService, HostWindowService } from "tabby-core"
 import { Shell, ShellProvider } from "tabby-local"
 import { BaseTerminalTabComponent } from "tabby-terminal"
 import { patchOSCProcessor } from "./cwdParser"
+import { patchSSHTabComponent } from "./winscp"
 
 @Injectable()
 export class StartupService {
@@ -16,6 +17,7 @@ export class StartupService {
             this.patchWslCwd()
             this.patchMouseEvents()
             patchOSCProcessor()
+            patchSSHTabComponent()
         })
     }
 
