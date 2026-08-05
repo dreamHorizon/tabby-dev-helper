@@ -10,10 +10,12 @@ import {
     PlatformService,
     TranslateService,
 } from 'tabby-core'
-import { SSHTabComponent } from 'tabby-ssh'
+import { PasswordStorageService, SSHTabComponent } from 'tabby-ssh'
 import { TerminalTabComponent } from 'tabby-local'
 import slugify from 'slugify'
 import { registerOscHandlers } from './decorator/osc-handlers'
+import { applySudoPasswordMiddleWare } from "./decorator/sudoPasswordMiddleware";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 @Injectable()
 export class DevHelperDecorator extends TerminalDecorator {
@@ -22,6 +24,8 @@ export class DevHelperDecorator extends TerminalDecorator {
         public platform: PlatformService,
         public notifications: NotificationsService,
         public translate: TranslateService,
+        public ps: PasswordStorageService,
+        public ngbModal: NgbModal,
     ) {
         super()
     }
@@ -37,6 +41,13 @@ export class DevHelperDecorator extends TerminalDecorator {
         )
     }
 
+    private attachToSession(tab: BaseTerminalTabComponent<any>) {
+        if (!tab.session) {
+            return
+        }
+        applySudoPasswordMiddleWare(tab, this);
+    }
+
     attach(tab: BaseTerminalTabComponent<any>): void {
         if (!(tab.frontend instanceof XTermFrontend)) {
             return
@@ -50,5 +61,14 @@ export class DevHelperDecorator extends TerminalDecorator {
         }
 
         registerOscHandlers(tab, this)
+        setTimeout(() => {
+            this.attachToSession(tab);
+            this.subscribeUntilDetached(
+                tab,
+                tab.sessionChanged$.subscribe(() => {
+                    this.attachToSession(tab);
+                }),
+            );
+        });
     }
 }
