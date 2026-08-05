@@ -1,4 +1,5 @@
 import { SSHSession, SSHTabComponent } from 'tabby-ssh'
+import { handleSSHDisconnect } from './sshDisconnect'
 
 type Expose<T, U extends Record<string, any> = {}> = {
     [K in keyof T]: T[K]
@@ -89,6 +90,7 @@ export function patchSSHTabComponent() {
             this.sshSession._tabs.push(this)
         }
         _injectWinSCPButton(this)
+        handleSSHDisconnect(this.session)
     }
 
     const originalDestroy = Proto.destroy
